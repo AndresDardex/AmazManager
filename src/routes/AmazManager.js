@@ -38,6 +38,16 @@ router.get("/AmazManager/:id", (req, res) => {
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
+router.put("/AmazManager/:id", (req, res) => {
+    const { id } = req.params;
+    const { product_id, product_name, category, discounted_price, actual_price, discount_percentage, rating, rating_count, about_product, user_id, user_name, review_id, review_title, review_content, img_link, product_link } = req.body;
+    AmazManagerSchema
+        .updateOne({ _id: id }, {
+            $set: { product_id, product_name, category, discounted_price, actual_price, discount_percentage, rating, rating_count, about_product, user_id, user_name, review_id, review_title, review_content, img_link, product_link }
+        })
+        .then((data) => res.json(data))
+        .catch((error) => res.json({ message: error }));
+});
 router.delete("/AmazManager/:id", (req, res) => {
     const { id } = req.params;
     AmazManagerSchema
