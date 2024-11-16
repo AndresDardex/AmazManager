@@ -21,5 +21,47 @@ router.get("/AmazManager", async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-
+router.delete("/AmazManager/deleteAll", async (req, res) => {
+    try {
+        // Eliminar todos los documentos de la colección
+        const result = await AmazManagerSchema.deleteMany({}); // No se pasa ningún filtro para eliminar todos
+        res.status(200).json({ message: "Todos los datos han sido eliminados", result });
+    } catch (error) {
+        console.error("Error al eliminar los datos:", error);
+        res.status(500).json({ message: "Error al eliminar los datos", error: error.message });
+    }
+});
+router.delete("/AmazManager/:id", (req, res) => {
+    const { id } = req.params;
+    AmazManagerSchema
+        .findByIdAndDelete(id)
+        .then((data) => res.json(data))
+        .catch((error) => res.json({ message: error }));
+});
+router.post("/AmazManager/importCSV", async (req, res) => {
+    try {
+        // Ruta del archivo CSV
+        const filePath = path.join(__dirname, "../amazon.csv");
+        console.log("Ruta del archivo CSV:", filePath);
+        
+        // Leer el archivo CSV y convertirlo en JSON
+        const jsonArray = await csvtojson().fromFile(filePath);
+        
+        // Convertir todos los valores a string
+        const dataAsStrings = jsonArray.map(item => {
+            const cleanedItem = {};
+            Object.keys(item).forEach(key => {
+                cleanedItem[key] = String(item[key]).trim(); // Convertir a string
+            });
+            return cleanedItem;
+        });
+        console.log("Datos leídos del archivo:", dataAsStrings);
+        // Insertar los datos convertidos a string en la base de datos
+        const result = await AmazManagerSchema.insertMany(dataAsStrings); // Cambié AmazManager por AmazManagerSchema
+        res.status(200).json({ message: "Datos insertados exitosamente" });
+    } catch (error) {
+        console.error("Error al procesar el archivo:", error);
+        res.status(500).json({ message: "Error al insertar los datos", error: error.message });
+    }
+});
 module.exports = router;
