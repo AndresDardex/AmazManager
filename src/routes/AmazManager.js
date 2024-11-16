@@ -31,6 +31,13 @@ router.delete("/AmazManager/deleteAll", async (req, res) => {
         res.status(500).json({ message: "Error al eliminar los datos", error: error.message });
     }
 });
+router.get("/AmazManager/:id", (req, res) => {
+    const { id } = req.params;
+    AmazManagerSchema
+        .findById(id)
+        .then((data) => res.json(data))
+        .catch((error) => res.json({ message: error }));
+});
 router.delete("/AmazManager/:id", (req, res) => {
     const { id } = req.params;
     AmazManagerSchema
