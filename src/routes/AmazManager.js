@@ -11,4 +11,15 @@ router.post("/AmazManager", (req, res) => {
         .then((data) => res.json(data))
         .catch((error) => res.json({ message: error }));
 });
+// Consultar todos los AmazManageres (con límite)
+router.get("/AmazManager", async (req, res) => {
+    try {
+        const limit = parseInt(req.query.limit) || 10; // Límite de resultados
+        const data = await AmazManagerSchema.find().limit(limit);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 module.exports = router;
