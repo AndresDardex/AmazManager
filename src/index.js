@@ -2,11 +2,14 @@ const express = require('express');
 const app = express();
 const port = 3000;
 const AmazManagerRoutes = require("./routes/AmazManager");
+const authRoutes = require("./routes/authentication");
 const mongoose = require("mongoose");
 
 require('dotenv').config();
 
 app.use(express.json()); 
+
+app.use("/api", authRoutes);
 
 app.use("/api", AmazManagerRoutes);
 

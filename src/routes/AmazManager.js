@@ -3,6 +3,8 @@ const router = express.Router(); // Manejador de rutas de express
 const AmazManagerSchema = require("../models/AmazManager");
 const csvtojson = require("csvtojson");
 const path = require("path");
+const verifyToken = require('./validate_token');
+
 // Nuevo AmazManager
 router.post("/AmazManager", (req, res) => {
     const AmazManager = new AmazManagerSchema(req.body); // Asegúrate de crear un nuevo documento correctamente
@@ -12,7 +14,7 @@ router.post("/AmazManager", (req, res) => {
         .catch((error) => res.json({ message: error }));
 });
 // Consultar todos los AmazManageres (con límite)
-router.get("/AmazManager", async (req, res) => {
+router.get("/AmazManager",verifyToken, async (req, res) => {
     try {
         const limit = parseInt(req.query.limit) || 10; // Límite de resultados
         const data = await AmazManagerSchema.find().limit(limit);
@@ -21,7 +23,7 @@ router.get("/AmazManager", async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-router.delete("/AmazManager/deleteAll", async (req, res) => {
+router.delete("/AmazManager/deleteAll", verifyToken, async (req, res) => {
     try {
         // Eliminar todos los documentos de la colección
         const result = await AmazManagerSchema.deleteMany({}); // No se pasa ningún filtro para eliminar todos
